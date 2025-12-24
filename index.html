@@ -1,22 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Tap Game</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- Contoh AdSense -->
-<script async
-  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-  data-ad-client="ca-pub-7565840236819481"></script>
+  <!-- VERIFIKASI GOOGLE (WAJIB DI HEAD) -->
+  <meta name="google-site-verification" content="ABC123XYZ" />
 
+  <title>Tap Game</title>
+
+  <!-- AdSense -->
+  <script async
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+    data-ad-client="ca-pub-7565840236819481"></script>
 </head>
+
 <body>
+
 <h1>Tap Game</h1>
+<p>Game tap sederhana untuk testing iklan.</p>
+
 <div id="score">Score: 0</div>
 <button onclick="tap()">TAP</button>
 
-<!-- Banner -->
+<!-- Banner AdSense -->
 <ins class="adsbygoogle"
      style="display:block"
      data-ad-client="ca-pub-7565840236819481"
@@ -24,9 +31,14 @@
      data-ad-format="auto"></ins>
 
 <script>
-(adsbygoogle = window.adsbygoogle || []).push({});
-let score=0;
-function tap(){score++;document.getElementById("score").innerText="Score: "+score;}
+  (adsbygoogle = window.adsbygoogle || []).push({});
+
+  let score = 0;
+  function tap() {
+    score++;
+    document.getElementById("score").innerText = "Score: " + score;
+  }
 </script>
+
 </body>
 </html>
