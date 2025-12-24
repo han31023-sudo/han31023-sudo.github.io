@@ -14,78 +14,587 @@
     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
     data-ad-client="ca-pub-7565840236819481"></script>
 
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
   <style>
-    /* Simple styles for ad containers */
-    .ad-center { text-align: center; margin: 12px 0; }
+    :root{
+      --bg1: #0f172a;
+      --bg2: #0b3a67;
+      --card: rgba(255,255,255,0.03);
+      --accent: #ffd166;
+      --accent-2: #06d6a0;
+      --muted: rgba(255,255,255,0.75);
+      --glass: rgba(255,255,255,0.03);
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(160deg, var(--bg1) 0%, var(--bg2) 100%);
+      color: #eef2ff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .wrap{
+      min-height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:48px 20px;
+      box-sizing:border-box;
+    }
+
+    .game-card{
+      width:100%;
+      max-width:920px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;
+      box-shadow: 0 6px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      padding:28px;
+      box-sizing:border-box;
+      text-align:center;
+      border:1px solid rgba(255,255,255,0.03);
+      position:relative;
+      overflow:visible;
+    }
+
+    header h1{
+      margin:0 0 6px 0;
+      font-size:28px;
+      letter-spacing:0.6px;
+    }
+    header p{
+      margin:0 0 18px 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .status-row{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+
+    .chip{
+      background:var(--glass);
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:600;
+      font-size:14px;
+      color:var(--muted);
+      box-shadow: 0 6px 18px rgba(2,6,23,0.45);
+    }
+    #timer { font-size:18px; color:#fff; }
+    #timer .time { font-size:26px; color:var(--accent-2); margin-left:8px; font-weight:700; }
+
+    .score-wrap{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:18px;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+
+    .score, .best{
+      background:linear-gradient(90deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+      padding:12px 18px;
+      border-radius:10px;
+      min-width:140px;
+      box-shadow: 0 4px 18px rgba(3,8,20,0.4);
+      font-weight:600;
+      font-size:18px;
+      color:#fff;
+      position:relative;
+    }
+
+    #score-value{
+      display:block;
+      font-size:44px;
+      line-height:1;
+      margin-top:6px;
+      color:var(--accent);
+    }
+    #best-value{
+      display:block;
+      font-size:28px;
+      margin-top:6px;
+      color:var(--accent-2);
+    }
+
+    .controls{
+      margin:18px 0 10px;
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      background:linear-gradient(180deg,#fff 0%, #f1f1f1 100%);
+      border: none;
+      padding:14px 22px;
+      border-radius:12px;
+      font-weight:700;
+      font-size:16px;
+      cursor:pointer;
+      transform:translateZ(0);
+      transition: transform .08s ease, box-shadow .12s ease, opacity .12s ease;
+      box-shadow: 0 8px 20px rgba(3,8,20,0.35);
+    }
+
+    .btn:active{ transform:scale(.98) translateY(1px); }
+    .btn.btn-tap{
+      background: linear-gradient(135deg, #ffd166 0%, #ff9f1c 100%);
+      color:#1b1b1b;
+      padding:22px 44px;
+      font-size:20px;
+      box-shadow: 0 12px 34px rgba(255,157,36,0.18);
+    }
+
+    .btn.btn-secondary{
+      background: transparent;
+      border:1px solid rgba(255,255,255,0.08);
+      color:var(--muted);
+      padding:12px 18px;
+      font-weight:600;
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:8px;
+    }
+
+    .links{
+      margin-top:20px;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .links a{ color:rgba(255,255,255,0.85); text-decoration:none; margin:0 8px; }
+    .links a:hover{ text-decoration:underline; }
+
+    /* Ad container adjustments */
+    .ad-center { text-align: center; margin: 18px 0; }
     .ad-inline { display:block; margin: 12px auto; }
+
+    /* Hide ads while playing to reduce accidental clicks, especially on mobile */
+    .playing .ad-center.play-hide { display:none !important; }
+
+    /* Small responsive tweaks */
+    @media (max-width:420px){
+      #score-value{ font-size:34px; }
+      .btn{ padding:12px 18px; font-size:15px; }
+      .btn.btn-tap{ padding:18px 26px; font-size:18px; }
+      .game-card{ padding:18px; border-radius:12px; }
+    }
+
+    /* Simple confetti canvas overlay */
+    #confetti-canvas{
+      position:fixed;
+      pointer-events:none;
+      left:0; top:0;
+      width:100%; height:100%;
+      z-index:9999;
+    }
+
+    .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
   </style>
 </head>
 
 <body>
 
-<h1>Tap Game</h1>
-<p>Game tap sederhana untuk testing iklan.</p>
+<div class="wrap">
+  <main class="game-card" role="main" aria-labelledby="title">
+    <header>
+      <h1 id="title">Tap Game</h1>
+      <p>Permainan tap sederhana — ketuk tombol sebanyak mungkin dalam waktu. Skor disimpan di browser Anda.</p>
+    </header>
 
-<!-- Top responsive ad -->
-<div class="ad-center">
-  <ins class="adsbygoogle ad-inline"
-       style="display:block; max-width:970px; margin:0 auto;"
-       data-ad-client="ca-pub-7565840236819481"
-       data-ad-slot="3776142128"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    <div class="status-row" aria-hidden="false">
+      <div class="chip" id="instructions">Tekan <strong>Start</strong> untuk mulai</div>
+      <div class="chip" id="timer" aria-live="polite">Waktu tersisa: <span class="time" id="time-remaining">10.0s</span></div>
+    </div>
+
+    <div class="score-wrap" aria-live="polite">
+      <div class="score" title="Skor saat ini">
+        Skor
+        <span id="score-value">0</span>
+      </div>
+
+      <div class="best" title="Skor tertinggi (disimpan)">
+        Terbaik
+        <span id="best-value">0</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="start-btn" class="btn btn-secondary" aria-label="Mulai permainan">Start (10s)</button>
+      <button id="tap-btn" class="btn btn-tap" aria-label="TAP button" disabled>TAP 👆</button>
+      <button id="reset-score" class="btn btn-secondary" title="Set Skor ke 0">Reset Skor</button>
+      <button id="reset-best" class="btn btn-secondary" title="Hapus skor terbaik">Reset Terbaik</button>
+    </div>
+
+    <div class="muted">Atau tekan <strong>Space</strong> di keyboard untuk men-tap (atau mulai jika belum berjalan).</div>
+
+    <!-- Top responsive ad -->
+    <div class="ad-center play-hide" aria-hidden="false">
+      <ins class="adsbygoogle ad-inline"
+           style="display:block; max-width:970px; margin:0 auto;"
+           data-ad-client="ca-pub-7565840236819481"
+           data-ad-slot="3776142128"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- Banner AdSense (existing) -->
+    <div class="ad-center" aria-hidden="false">
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-7565840236819481"
+           data-ad-slot="3776142128"
+           data-ad-format="auto"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <p class="links" style="text-align:center">
+      <a href="about.html">Tentang</a> |
+      <a href="privacy.html">Privasi</a> |
+      <a href="contact.html">Kontak</a>
+    </p>
+
+    <!-- In-article / Inline ad under game area -->
+    <div class="ad-center play-hide" aria-hidden="false">
+      <ins class="adsbygoogle ad-inline"
+           style="display:block; width:100%; max-width:728px; height:auto;"
+           data-ad-client="ca-pub-7565840236819481"
+           data-ad-slot="3776142128"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- Footer ad -->
+    <hr style="border:0;border-top:1px solid rgba(255,255,255,0.03);margin:18px 0;">
+    <div class="ad-center" aria-hidden="false">
+      <ins class="adsbygoogle"
+           style="display:block; max-width:970px; margin:0 auto;"
+           data-ad-client="ca-pub-7565840236819481"
+           data-ad-slot="3776142128"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+  </main>
 </div>
 
-<div id="score">Score: 0</div>
-<button onclick="tap()">TAP</button>
+<!-- Confetti Canvas -->
+<canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
-<!-- Banner AdSense (existing) -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-7565840236819481"
-     data-ad-slot="3776142128"
-     data-ad-format="auto"></ins>
+<!-- Screen reader only result message -->
+<div id="result-sr" class="sr-only" aria-live="polite"></div>
 
 <script>
-  (adsbygoogle = window.adsbygoogle || []).push({});
+  (function(){
+    // Elements
+    const scoreEl = document.getElementById('score-value');
+    const bestEl = document.getElementById('best-value');
+    const tapBtn = document.getElementById('tap-btn');
+    const startBtn = document.getElementById('start-btn');
+    const resetScoreBtn = document.getElementById('reset-score');
+    const resetBestBtn = document.getElementById('reset-best');
+    const timeEl = document.getElementById('time-remaining');
+    const instructions = document.getElementById('instructions');
+    const resultSr = document.getElementById('result-sr');
+    const confettiCanvas = document.getElementById('confetti-canvas');
 
-  let score = 0;
-  function tap() {
-    score++;
-    document.getElementById("score").innerText = "Score: " + score;
-  }
+    let score = 0;
+    let best = 0;
+    const GAME_DURATION = 10.0; // seconds
+    let remaining = GAME_DURATION;
+    let timerInterval = null;
+    let playing = false;
+    const BEST_KEY = 'tap_game_best_' + location.pathname;
+
+    // Audio context (creates on first user interaction for browser autoplay policies)
+    let audioCtx = null;
+    function ensureAudioCtx(){
+      if(!audioCtx){
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    // Click sound
+    function playClick(){
+      try{
+        ensureAudioCtx();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = 'sine';
+        o.frequency.value = 880; // A5
+        g.gain.value = 0.0001;
+        o.connect(g);
+        g.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+        g.gain.cancelScheduledValues(now);
+        g.gain.setValueAtTime(0.0001, now);
+        g.gain.exponentialRampToValueAtTime(0.12, now + 0.005);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+        o.start(now);
+        o.stop(now + 0.14);
+      }catch(e){}
+    }
+
+    // Record sound (short fanfare)
+    function playRecord(){
+      try{
+        ensureAudioCtx();
+        const now = audioCtx.currentTime;
+        const freqs = [660, 880, 990];
+        freqs.forEach((f, i) => {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.type = 'sine';
+          o.frequency.value = f;
+          g.gain.value = 0.0001;
+          o.connect(g);
+          g.connect(audioCtx.destination);
+          const t = now + i * 0.08;
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(0.16, t + 0.01);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + 0.18);
+          o.start(t);
+          o.stop(t + 0.22);
+        });
+      }catch(e){}
+    }
+
+    // Load best from storage
+    function loadBest(){
+      best = parseInt(localStorage.getItem(BEST_KEY)) || 0;
+      bestEl.textContent = best;
+    }
+
+    function saveBest(){
+      localStorage.setItem(BEST_KEY, best);
+      bestEl.textContent = best;
+    }
+
+    function updateScore(){
+      scoreEl.textContent = score;
+      // subtle animation
+      scoreEl.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-8px)' }, { transform: 'translateY(0)' }], { duration: 120 });
+    }
+
+    function startGame(){
+      // unlock audio on first interaction
+      ensureAudioCtx();
+      if(audioCtx && audioCtx.state === 'suspended'){
+        audioCtx.resume().catch(()=>{});
+      }
+
+      score = 0;
+      remaining = GAME_DURATION;
+      playing = true;
+      document.body.classList.add('playing');
+      // hide some ad sections by adding play-hide class already on elements; set aria-hidden
+      document.querySelectorAll('.ad-center.play-hide').forEach(n => n.setAttribute('aria-hidden','true'));
+      tapBtn.disabled = false;
+      startBtn.disabled = true;
+      startBtn.textContent = 'Berjalan...';
+      instructions.textContent = 'Ketuk sebanyak mungkin!';
+      updateScore();
+      updateTimeDisplay();
+
+      // start interval (update every 50ms for smoothness)
+      timerInterval = setInterval(()=> {
+        remaining = Math.max(0, +(remaining - 0.05).toFixed(2));
+        updateTimeDisplay();
+        if(remaining <= 0){
+          endGame();
+        }
+      }, 50);
+    }
+
+    function updateTimeDisplay(){
+      timeEl.textContent = remaining.toFixed(1) + 's';
+      // pulse when near end
+      if(remaining <= 3){
+        timeEl.style.color = '#ff6b6b';
+        timeEl.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.06)' }, { transform: 'scale(1)' }], { duration: 300 });
+      }else{
+        timeEl.style.color = 'var(--accent-2)';
+      }
+    }
+
+    function endGame(){
+      if(!playing) return;
+      playing = false;
+      clearInterval(timerInterval);
+      timerInterval = null;
+      tapBtn.disabled = true;
+      startBtn.disabled = false;
+      startBtn.textContent = 'Start (10s)';
+      instructions.textContent = 'Selesai — lihat hasil Anda!';
+      document.body.classList.remove('playing');
+      // restore ad aria
+      document.querySelectorAll('.ad-center.play-hide').forEach(n => n.setAttribute('aria-hidden','false'));
+      // check best
+      if(score > best){
+        best = score;
+        saveBest();
+        // announce and celebrate
+        resultSr.textContent = `Permainan selesai. Skor ${score}. Rekor baru!`;
+        playRecord();
+        fireConfetti();
+        // brief highlight animation on best
+        bestEl.animate([{ transform:'scale(1)' }, { transform:'scale(1.12)' }, { transform:'scale(1)' }], { duration: 420 });
+      }else{
+        resultSr.textContent = `Permainan selesai. Skor ${score}. Skor terbaik ${best}.`;
+      }
+    }
+
+    function tap(){
+      if(!playing) return;
+      score++;
+      updateScore();
+      playClick();
+      // update best live if exceeding (but only persist at end)
+      if(score > best){
+        // live visual
+        bestEl.textContent = score;
+        bestEl.style.filter = 'drop-shadow(0 6px 18px rgba(6,200,150,0.12))';
+        setTimeout(()=> bestEl.style.filter = '', 220);
+      }
+    }
+
+    function resetScore(){
+      score = 0;
+      updateScore();
+    }
+
+    function resetBest(){
+      best = 0;
+      localStorage.removeItem(BEST_KEY);
+      bestEl.textContent = 0;
+    }
+
+    // Confetti implementation (lightweight)
+    function fireConfetti(){
+      const canvas = confettiCanvas;
+      const ctx = canvas.getContext('2d');
+      let W = canvas.width = window.innerWidth;
+      let H = canvas.height = window.innerHeight;
+      const colors = ['#ffd166','#06d6a0','#4cc9f0','#ff6b6b','#ffd6a5','#c084fc'];
+      const count = Math.min(120, Math.floor(W/8));
+      const pieces = [];
+      function rand(min,max){ return Math.random()*(max-min)+min; }
+      for(let i=0;i<count;i++){
+        pieces.push({
+          x: rand(0, W),
+          y: rand(-H, 0),
+          r: rand(6, 12),
+          d: rand(2, 10),
+          tilt: rand(-0.2, 0.2),
+          color: colors[Math.floor(Math.random()*colors.length)],
+          tiltAngle: rand(0, Math.PI*2)
+        });
+      }
+
+      let t0 = performance.now();
+      function frame(now){
+        const dt = now - t0;
+        t0 = now;
+        ctx.clearRect(0,0,W,H);
+        for(let p of pieces){
+          p.tiltAngle += dt * 0.002 * p.d;
+          p.y += dt * 0.05 * p.d;
+          p.x += Math.sin(p.tiltAngle) * 0.7;
+          p.tilt = Math.sin(p.tiltAngle) * 10;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.ellipse(p.x + p.tilt, p.y, p.r, p.r*0.6, p.tilt, 0, Math.PI*2);
+          ctx.fill();
+        }
+        // remove when off-screen
+        if(pieces.every(p => p.y - p.r > H)){
+          // end
+          ctx.clearRect(0,0,W,H);
+          return;
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+      // auto-clear after 2500ms
+      setTimeout(()=>{ ctx.clearRect(0,0,W,H); }, 2600);
+      // handle resize
+      window.addEventListener('resize', () => {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }, {passive:true});
+    }
+
+    // Bind events
+    tapBtn.addEventListener('click', tap);
+    startBtn.addEventListener('click', ()=> {
+      if(!playing) startGame();
+    });
+    resetScoreBtn.addEventListener('click', resetScore);
+    resetBestBtn.addEventListener('click', resetBest);
+
+    // Keyboard support
+    window.addEventListener('keydown', function(e){
+      if(e.code === 'Space'){
+        e.preventDefault();
+        // If not playing, start; if playing, tap
+        if(!playing){
+          startGame();
+        }else{
+          tap();
+        }
+      } else if(e.code === 'Enter'){
+        // Enter triggers Tap when button focused, else start
+        const active = document.activeElement;
+        if(active === tapBtn){
+          tabIndexSafe(() => tap());
+        }else if(!playing){
+          startGame();
+        }
+      }
+    });
+
+    // Ensure audio context creation on first user gesture for some browsers
+    function tabIndexSafe(fn){
+      try { fn(); } catch(e){}
+    }
+
+    // Initialize
+    loadBest();
+    updateScore();
+    updateTimeDisplay();
+
+    // Persist best at end of game if beaten
+    // (already saved in endGame via saveBest)
+
+    // Small UX: if user clicks tap before starting, start game automatically (optional)
+    tapBtn.addEventListener('mousedown', function(){
+      if(!playing){
+        startBtn.focus();
+      }
+    });
+
+    // Accessibility: focus management
+    startBtn.setAttribute('aria-pressed', 'false');
+  })();
 </script>
-  
-<!-- In-article / Inline ad under game area -->
-<div class="ad-center">
-  <ins class="adsbygoogle ad-inline"
-       style="display:block; width:100%; max-width:728px; height:auto;"
-       data-ad-client="ca-pub-7565840236819481"
-       data-ad-slot="3776142128"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
-  
-<!-- Footer ad -->
-<hr>
-<div class="ad-center">
-  <ins class="adsbygoogle"
-       style="display:block; max-width:970px; margin:0 auto;"
-       data-ad-client="ca-pub-7565840236819481"
-       data-ad-slot="3776142128"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
-
-<p style="text-align:center"> 
-  <a href="about.html">Tentang</a> |
-  <a href="privacy.html">Privasi</a> |
-  <a href="contact.html">Kontak</a>
-</p>
-
 
 </body>
 </html>
