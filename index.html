@@ -2,7 +2,12 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8"> 
-  <meta name="viewport" content="width=device-width, initial-scale=1"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2196f3">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 
   <!-- VERIFIKASI GOOGLE (WAJIB DI HEAD) -->
   <meta name="google-adsense-account" content="ca-pub-7565840236819481">
@@ -211,6 +216,13 @@
     .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
   </style>
 </head>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js")
+    .then(() => console.log("SW registered"))
+    .catch(err => console.log("SW failed", err));
+}
+</script>
 
 <body>
 
